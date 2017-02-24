@@ -1,4 +1,2 @@
-import urllib2
-response = urllib2.urlopen('http://www.baidu.com/')
-html = response.read()
-print html
+# http://voice.hupu.com/nba
+# https://voice.hupu.com/cba/2126656.html这个是CBA的
