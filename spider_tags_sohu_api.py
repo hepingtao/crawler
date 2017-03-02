@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-
+import json
 import sys
 import os
 import time
@@ -71,7 +71,7 @@ class mysqldb():
         self._dblastconntime = 0
         self._dbconn = None
         self._dbcursor = None
-        #self.conndb()
+        self.conndb()
         
     def conndb(self):
         try:
@@ -116,9 +116,9 @@ class mysqldb():
         
         return sources
         
-    def insertTag(self,p_tag_pk, tag_name):
+    def insertTag(self, root_tag_pk, p_tag_pk, tag_name):
         try:
-            sql = "insert into spider_tag (p_tag_pk, tag_name) values (%d,'%s')" % (p_tag_pk, tag_name)
+            sql = "insert into spider_tag (root_tag_pk, p_tag_pk, tag_name) values (%d, %d,'%s')" % (root_tag_pk, p_tag_pk, tag_name)
             print sql
             self._dbcursor.execute(sql)
         except Exception, e:
@@ -260,14 +260,39 @@ if __name__ == "__main__":
     
     # daemon()
     
-    try:
-        g_spiderTags = spiderTags(g_mysql_conf)
-        g_spiderTags.run(g_instance_id)
-    except Exception, e:
-        g_logger.error(traceback.format_exc())
+    # try:
+    #     g_spiderTags = spiderTags(g_mysql_conf)
+    #     g_spiderTags.run(g_instance_id)
+    # except Exception, e:
+    #     g_logger.error(traceback.format_exc())
+
+    mysql = mysqldb(g_mysql_conf)
+    # g_spiderTags._mysql.conndb()
+
+    # api_template_sohu = "http://apiv2.sohu.com/apiV2/re/sub/news?channelId=15&subId=994&pno={pno}&psize=100"
+    # api_template_sohu = "http://apiv2.sohu.com/apiV2/re/tag/news?tagId=66026&pno={pno}&psize=100"
+    # api_template_sohu = "http://apiv2.sohu.com/apiV2/re/tag/news?tagId=57384&pno={pno}&psize=100"
+    # api_template_sohu = "http://apiv2.sohu.com/apiV2/re/tag/news?tagId=66029&pno={pno}&psize=100"
+    api_template_sohu = "http://apiv2.sohu.com/apiV2/re/tag/news?tagId=67040&pno={pno}&psize=100"
+    for p_no in range(1, 101):
+        api_url = api_template_sohu.format(pno=p_no)
+        response = requests.get(api_url)
+        response_json = json.loads(response.content)
+        news_data = response_json['list']
+        news_list = [(news['title'], news['path'], [tag['tagName'] for tag in news['tagList']]) for news in news_data]
+        print "\nPage {pno}: ".format(pno=p_no) + api_url
+        for news_tuple in news_list:
+            news_title = news_tuple[0]
+            news_url = news_tuple[1]
+            tag_list = news_tuple[2]
+            news_tags = ",".join(tag_list)
+            print news_title
+            print news_url
+            print news_tags
+            for tag_name in tag_list:
+                mysql.insertTag(13054, 13233, tag_name)
+
+        time.sleep(1)  # 休眠,防止反爬虫机制
+        # sys.exit(1)
         
     g_logger.info("spider tags exit")
-
-
-
-

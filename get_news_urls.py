@@ -25,7 +25,7 @@ class UrlProcess(multiprocessing.Process):
             media_id = self.media_queue.get(block=False)
             current_time = int(time.time())
             media_url = re.sub('media_id=.*?&','media_id=%s&'%media_id,self.basic_url)
-            media_url = re.sub('max_behot_time=.*?&','max_behot_time=%d&'%current_time,media_url)
+            media_url = re.sub('max_behot_time=.*?&','max_behot_time=%d&' % current_time, media_url)
             self.get_news_urls(media_url)
 
     # 访问媒体页面,获取返回的数据中的新闻url列表
@@ -42,7 +42,7 @@ class UrlProcess(multiprocessing.Process):
             max_behot_time = response_json['next']['max_behot_time']    # 获取max_behot_time,用来构造新的url
             if max_behot_time == '0':
                 break
-            media_url = re.sub('max_behot_time=([\d]+?)&','max_behot_time=%s&'%max_behot_time,media_url)
+            media_url = re.sub('max_behot_time=([\d]+?)&','max_behot_time=%s&'%max_behot_time, media_url)
             print media_url
             print "\n".join(news_titles)
             time.sleep(1)   # 休眠,防止反爬虫机制

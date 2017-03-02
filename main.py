@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # print media_queue
     # sys.exit(1)
 
-    media_queue.put(4492956276)
+    media_queue.put(6493820122)
 
     # 启动多进程抓取新闻url,存储在public_news_set中,并插入public_url_queue
     process_pool = []

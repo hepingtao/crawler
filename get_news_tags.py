@@ -30,7 +30,7 @@ class NewsProcess(multiprocessing.Process):
                 print ",".join(tags)  # do something
                 time.sleep(2)   # 休眠
 
-            except Exception,msg:
+            except Exception, msg:
                 print msg
                 pass
 
