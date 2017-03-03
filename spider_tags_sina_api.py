@@ -1,20 +1,10 @@
 # -*- coding: utf8 -*-
 import json
-import sys
-import os
-import time
-import traceback
-import signal
-import MySQLdb
-import MySQLdb.cursors
 import logging
-from logging.handlers import TimedRotatingFileHandler
-from scrapy.selector import Selector
-from scrapy.http import HtmlResponse
-from selenium import webdriver
+import time
+
 import requests
-import pycurl
-import StringIO
+
 import spider_tags_2
 
 # g_log_dir = "./"

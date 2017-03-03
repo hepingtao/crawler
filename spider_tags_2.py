@@ -115,6 +115,23 @@ class mysqldb():
     #         if e[0] != 1062:
     #             g_logger.error(traceback.format_exc())
 
+    def get_tag_pk(self, root_tag_pk, p_tag_pk, tag_name):
+        self.conndb()
+
+        sql = '''
+                 select t.pk
+                   from touchtv_dev.spider_tag t
+                  where t.root_tag_pk = {root_tag_pk}
+                    and t.p_tag_pk = {p_tag_pk}
+                    and t.tag_name = '{tag_name}'
+              '''.format(root_tag_pk=root_tag_pk, p_tag_pk=p_tag_pk, tag_name=tag_name.encode('utf-8'))
+        print sql
+        g_logger.info(sql)
+        self._dbcursor.execute(sql)
+        pk = self._dbcursor.fetchone()
+
+        return pk
+
     def insertTag(self, p_tag_pk, tag_name, root_tag_pk):
         try:
             ssql = "select pk from spider_tag where p_tag_pk=%d and tag_name='%s'" % (p_tag_pk, tag_name)

@@ -6,6 +6,8 @@ import time
 
 import sys
 
+import spider_tags_2
+
 import re
 from scrapy.selector import Selector
 from selenium import webdriver
@@ -13,6 +15,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def init_curl():
     c = pycurl.Curl()
@@ -41,8 +45,8 @@ if __name__ == '__main__':
 
     start_page_url = "http://roll.sports.sina.com.cn/s/channel.php?ch=02#col=181&spec=&type=&ch=02&k=&offset_page=0&offset_num=0&num=60&asc=&page=19"
     argc = len(sys.argv)
-    # print argc
-    # print sys.argv
+    print argc
+    print sys.argv
     start_page_url = ""
     url_list_xpath = ""
     tag_list_xpath = ""
@@ -64,7 +68,7 @@ if __name__ == '__main__':
 
     curl = init_curl()
     dr = webdriver.PhantomJS('phantomjs')
-    dr.get(start_page_url)
+    # dr.get(start_page_url)
     time.sleep(1)
 
     # Current page source
@@ -135,11 +139,32 @@ if __name__ == '__main__':
         print page[0]
         print url
         html = get_html(curl, url)
+        try:
+            html = html.decode('gbk')
+        except UnicodeEncodeError:
+            pass
         keyWords = Selector(text=html).xpath(tag_list_xpath).extract()
         # keyWords = Selector(text=html).xpath("//section[@class='article-a_keywords']/a/text()").extract()
         print ", ".join(keyWords)
         # for kw in keyWords:
-        #     print kw
+        #     print kw,
+        # print
+
+    # url = "http://finance.sina.com.cn/trust/20151214/082824009654.shtml"
+    # url_utf8 = "http://finance.sina.com.cn/trust/xthydt/2015-12-28/doc-ifxmxxsr3852440.shtml"
+    # dr.get(url_utf8)
+    # g_mysql_conf = spider_tags_2.g_mysql_conf
+    # mysql = spider_tags_2.mysqldb(g_mysql_conf)
+    # # mysql.conndb()
+    # teams = dr.find_elements_by_xpath('//div[@class="article-keywords"]/a')
+    # for team in teams:
+    #     tag = team.text
+    #     print tag
+    #
+    #     # tag = team.text.encode("utf8")
+    #     # mysql.insertTag(0, tag, 0)
+    #     break
+    #     print tag
 
     dr.close()
     dr.quit()
